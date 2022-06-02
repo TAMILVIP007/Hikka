@@ -970,11 +970,7 @@ def get_kwargs() -> dict:
     # https://stackoverflow.com/a/65927265/19170642
     frame = inspect.currentframe().f_back
     keys, _, _, values = inspect.getargvalues(frame)
-    kwargs = {}
-    for key in keys:
-        if key != "self":
-            kwargs[key] = values[key]
-    return kwargs
+    return {key: values[key] for key in keys if key != "self"}
 
 
 init_ts = time.perf_counter()

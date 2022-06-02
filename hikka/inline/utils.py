@@ -339,12 +339,8 @@ class Utils(InlineUnit):
                 )
             except MessageNotModified:
                 if query:
-                    try:
+                    with contextlib.suppress(InvalidQueryID):
                         await query.answer()
-                    except InvalidQueryID:
-                        pass  # Just ignore that error, bc we need to just
-                        # remove preloader from user's button, if message
-                        # was deleted
             except RetryAfter as e:
                 logger.info(f"Sleeping {e.timeout}s on aiogram FloodWait...")
                 await asyncio.sleep(e.timeout)

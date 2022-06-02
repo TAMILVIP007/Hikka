@@ -89,7 +89,7 @@ class Events(InlineUnit):
 
             for res in result:
                 mandatory = {"message", "photo", "gif", "video", "file"}
-                if not any(item in res for item in mandatory):
+                if all(item not in res for item in mandatory):
                     logger.error(
                         f"Got invalid type from inline handler. It must contain one of `{mandatory}`"
                     )
@@ -98,8 +98,9 @@ class Events(InlineUnit):
 
                 if "file" in res and "mime_type" not in res:
                     logger.error(
-                        f"Got invalid type from inline handler. It contains field `file`, so it must contain `mime_type` as well"
+                        "Got invalid type from inline handler. It contains field `file`, so it must contain `mime_type` as well"
                     )
+
 
             inline_result = []
 
@@ -197,9 +198,7 @@ class Events(InlineUnit):
             reply_markup = []
 
         if re.search(r"authorize_web_(.{8})", query.data):
-            self._web_auth_tokens += [
-                re.search(r"authorize_web_(.{8})", query.data).group(1)
-            ]
+            self._web_auth_tokens += [re.search(r"authorize_web_(.{8})", query.data)[1]]
             return
 
         # First, dispatch all registered callback handlers

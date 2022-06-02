@@ -205,20 +205,20 @@ class HikkaConfigMod(loader.Module):
                 *(
                     [
                         {
-                            "text": f"✅ {self.strings('set')} `True`",
-                            "callback": self.inline__set_bool,
-                            "args": (mod, option, True),
-                        }
-                    ]
-                    if not self.lookup(mod).config[option]
-                    else [
-                        {
                             "text": f"❌ {self.strings('set')} `False`",
                             "callback": self.inline__set_bool,
                             "args": (mod, option, False),
                         }
                     ]
-                ),
+                    if self.lookup(mod).config[option]
+                    else [
+                        {
+                            "text": f"✅ {self.strings('set')} `True`",
+                            "callback": self.inline__set_bool,
+                            "args": (mod, option, True),
+                        }
+                    ]
+                )
             ],
             [
                 *(
@@ -240,7 +240,10 @@ class HikkaConfigMod(loader.Module):
                     "callback": self.inline__configure,
                     "args": (mod,),
                 },
-                {"text": self.strings("close_btn"), "callback": self.inline__close},
+                {
+                    "text": self.strings("close_btn"),
+                    "callback": self.inline__close,
+                },
             ],
         ]
 
@@ -488,16 +491,15 @@ class HikkaConfigMod(loader.Module):
         )
 
     async def inline__configure(self, call: InlineCall, mod: str):
-        btns = []
+        btns = [
+            {
+                "text": param,
+                "callback": self.inline__configure_option,
+                "args": (mod, param),
+            }
+            for param in self.lookup(mod).config
+        ]
 
-        for param in self.lookup(mod).config:
-            btns += [
-                {
-                    "text": param,
-                    "callback": self.inline__configure_option,
-                    "args": (mod, param),
-                }
-            ]
 
         await call.edit(
             self.strings("configuring_mod").format(utils.escape_html(mod)),

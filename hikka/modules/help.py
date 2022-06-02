@@ -210,7 +210,7 @@ class HelpMod(loader.Module):
             )
 
         await utils.answer(
-            message, f"{reply}\n\n{self.strings('not_exact') if not exact else ''}"
+            message, f"{reply}\n\n{'' if exact else self.strings('not_exact')}"
         )
 
     @loader.unrestricted
@@ -236,10 +236,7 @@ class HelpMod(loader.Module):
 
         hidden = self.get("hide", [])
 
-        reply = self.strings("all_header").format(
-            count,
-            len(hidden) if not force else 0,
-        )
+        reply = self.strings("all_header").format(count, 0 if force else len(hidden))
         shown_warn = False
 
         plain_ = []
@@ -349,10 +346,11 @@ class HelpMod(loader.Module):
         no_commands_ = "\n".join(no_commands_) if force else ""
 
         partial_load = (
-            f"\n\n{self.strings('partial_load')}"
-            if not self.lookup("Loader")._fully_loaded
-            else ""
+            ""
+            if self.lookup("Loader")._fully_loaded
+            else f"\n\n{self.strings('partial_load')}"
         )
+
 
         await utils.answer(
             message,

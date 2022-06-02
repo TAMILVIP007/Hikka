@@ -537,7 +537,7 @@ class Gallery(InlineUnit):
                 callback_data=self._units[unit_id]["btn_call_data"]["back"],
             ),
             InlineKeyboardButton(
-                "▶️" if not self._units[unit_id].get("slideshow", False) else "⏸",
+                "⏸" if self._units[unit_id].get("slideshow", False) else "▶️",
                 callback_data=self._units[unit_id]["btn_call_data"]["show"],
             ),
             InlineKeyboardButton(
@@ -545,6 +545,7 @@ class Gallery(InlineUnit):
                 callback_data=self._units[unit_id]["btn_call_data"]["next"],
             ),
         )
+
 
         markup.add(
             InlineKeyboardButton(
